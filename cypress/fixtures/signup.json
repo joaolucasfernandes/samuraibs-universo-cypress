@@ -1,0 +1,23 @@
+{
+  "success": {
+    "name": "Rone Mendes",
+    "email": "ronemendes@yahoo.com.br",
+    "password": "amanha"
+  },
+  "email_dup": {
+    "name": "Ana Julia",
+    "email": "ana@yahoo.com.br",
+    "password": "amanha",
+    "is_provider": true
+  },
+  "email_inv": {
+    "name": "Alvaro Henrique",
+    "email": "alvaro.yahoo.com.br",
+    "password": "amanha"
+  },
+  "short_password": {
+    "name": "Jason Friday",
+    "email": "jason@gmail.com",
+    "password": null
+  }
+}

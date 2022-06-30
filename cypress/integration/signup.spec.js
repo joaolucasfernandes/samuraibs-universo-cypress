@@ -6,18 +6,20 @@ import signupPage from '../support/pages/signup'
 
 describe('cadastro', function () {
 
+    before(function(){  //chamando o arquivo json da pasta fixtures
+        cy.fixture('signup').then(function(signup){
+            this.success = signup.success
+            this.email_dup = signup.email_dup
+            this.email_inv = signup.email_inv
+            this.short_password = signup.short_password
+        })
+    })
     //const email = faker.internet.email()  //geração de email dinâmico
 
     context('quando o usuário é novato', function () {
-        const user = {
-            name: 'Rone Mendes',
-            email: 'ronemendes@yahoo.com.br',
-            password: 'amanha'
-        }
-
         before(function () {
             // removendo o usuário para que a massa seja sempre válida
-            cy.task('removeUser', user.email)
+            cy.task('removeUser', this.success.email)
                 .then(function (result) {
                     console.log(result)
                 })
@@ -25,7 +27,7 @@ describe('cadastro', function () {
 
         it('deve cadastrar com sucesso', function () {
             signupPage.go()
-            signupPage.form(user)
+            signupPage.form(this.success)
             signupPage.submit()
             signupPage.toast.shouldHaveText('Agora você se tornou um(a) Samurai, faça seu login para ver seus agendamentos!')
 
@@ -39,48 +41,25 @@ describe('cadastro', function () {
     })
 
     context('quando o email já existe', function () {
-        const user = {
-            name: 'Ana Julia',
-            email: 'ana@yahoo.com.br',
-            password: 'amanha',
-            is_provider: true
-        }
-
         before(function () {
-            cy.task('removeUser', user.email)  //remove o usuário a cada novo teste
-                .then(function (result) {
-                    console.log(result)
-                })
-
-            cy.request(  //pre cadastro atraves da api e verificar se o retorno desse cadastro direto na api, retornou 200
-                'POST',  //isso deixará o teste independente
-                'http://localhost:3333/users',
-                user
-            ).then(function (response) {
-                expect(response.status).to.eq(200)
-            })
+            cy.postUser(this.email_dup)  ///função está no arquivo coomands.js
         })
 
         it('não deve cadastrar o usuário', function () {  //only = roda somente essa funcionalidade
             signupPage.go()
-            signupPage.form(user)
+            signupPage.form(this.email_dup)
             signupPage.submit()
             signupPage.toast.shouldHaveText('Email já cadastrado para outro usuário.')
         })
     })
 
     context('quando o email é incorreto', function () {
-        const user = {
-            name: 'Alvaro Henrique',
-            email: 'alvaro.yahoo.com.br',
-            password: 'amanha',
-        }
-
+      
         it('deve exibir mensagem de alerta', function () {
             signupPage.go()
-            signupPage.form(user)
+            signupPage.form(this.email_inv)
             signupPage.submit()
-            signupPage.alertHaveText('Informe um email válido')
+            signupPage.alert.haveText('Informe um email válido')
         })
     })
 
@@ -94,15 +73,16 @@ describe('cadastro', function () {
 
         passwords.forEach(function (p) {
             it('não deve cadastrar com a senha: ' + p, function () {
-                const user = { name: 'Jason Friday', email: 'jason@gmail.com', password: p }
+                
+                this.short_password.password = p
 
-                signupPage.form(user)
+                signupPage.form(this.short_password)
                 signupPage.submit()
             })
         })
 
         afterEach(function () {
-            signupPage.alertHaveText('Pelo menos 6 caracteres')
+            signupPage.alert.haveText('Pelo menos 6 caracteres')
         })
 
     })
@@ -123,7 +103,7 @@ describe('cadastro', function () {
         alertMessages.forEach(function(alert){
 
             it('deve exibir ' + alert.toLowerCase(), function(){
-                signupPage.alertHaveText(alert)
+                signupPage.alert.haveText(alert)
             })
         })
     })
