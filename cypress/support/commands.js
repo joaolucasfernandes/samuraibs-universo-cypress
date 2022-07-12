@@ -88,6 +88,8 @@ Cypress.Commands.add('createAppointment', function (hour) {
         date: date                              //recebe a constante com a data formatada
     }
 
+    cy.log(payload)
+
     cy.request({       //requisição para criar o agendamento
         method: 'POST',
         url: apiServer + '/appointments', // `${apiServer}/appointments`, //interpolação

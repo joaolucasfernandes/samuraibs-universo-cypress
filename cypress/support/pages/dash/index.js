@@ -10,7 +10,7 @@ class DashPage {
 
     //função que valida se o calendário ta visivel
     calendarShouldBeVisible() {
-        cy.get(el.calendar, { timeout: 7000 })
+        cy.get(el.calendar)
             .should('be.visible')
     }
 
@@ -85,7 +85,7 @@ class DashPage {
     }
 
     appointmentShouldBe(customer, hour) {
-        cy.contains('div', customer.name, { timeout: 10000 })  //busca uma div combinando com o texto da massa
+        cy.contains('div', customer.name)  //busca uma div combinando com o texto da massa
             .should('be.visible')
             .parent()   //pega o elemento pai
             .contains(el.boxHour, hour)
